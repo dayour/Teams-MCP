@@ -1,0 +1,131 @@
+{
+  "name": "teams-mcp-extension",
+  "displayName": "Teams MCP - Model Context Protocol for Microsoft Teams",
+  "description": "Easy integration of Microsoft Teams calendar and meeting capabilities for AI assistants like Claude Desktop",
+  "version": "1.0.0",
+  "publisher": "teams-mcp",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "teams",
+    "mcp",
+    "model context protocol",
+    "claude",
+    "ai",
+    "calendar",
+    "meetings",
+    "microsoft graph"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "teams-mcp.configure",
+        "title": "Configure Teams MCP Server",
+        "category": "Teams MCP"
+      },
+      {
+        "command": "teams-mcp.start",
+        "title": "Start Teams MCP Server",
+        "category": "Teams MCP"
+      },
+      {
+        "command": "teams-mcp.stop",
+        "title": "Stop Teams MCP Server",
+        "category": "Teams MCP"
+      },
+      {
+        "command": "teams-mcp.status",
+        "title": "Show Teams MCP Status",
+        "category": "Teams MCP"
+      }
+    ],
+    "configuration": {
+      "title": "Teams MCP",
+      "properties": {
+        "teamsMcp.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start the Teams MCP server when VS Code starts"
+        },
+        "teamsMcp.serverPort": {
+          "type": "number",
+          "default": 0,
+          "description": "Port for the MCP server (0 for automatic port selection)"
+        },
+        "teamsMcp.logLevel": {
+          "type": "string",
+          "enum": ["error", "warn", "info", "debug"],
+          "default": "info",
+          "description": "Log level for the MCP server"
+        },
+        "teamsMcp.useDeviceAuth": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use device-based authentication (recommended for easy setup)"
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "teams-mcp-status",
+          "name": "Teams MCP Status",
+          "when": "extension.teams-mcp.enabled"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "teams-mcp",
+          "title": "Teams MCP",
+          "icon": "$(organization)"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.5",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.16.0",
+    "@azure/msal-node": "^2.6.6",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "zod": "^3.23.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dayour/Teams-MCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dayour/Teams-MCP/issues"
+  },
+  "homepage": "https://github.com/dayour/Teams-MCP#readme",
+  "license": "MIT"
+}

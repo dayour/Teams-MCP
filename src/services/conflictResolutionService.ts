@@ -7,6 +7,12 @@ export interface Conflict {
     details: string;
 }
 
+export interface TimeSlot {
+    startTime: string;
+    endTime: string;
+    confidence?: number;
+}
+
 export interface ConflictResolution {
     type: 'reschedule' | 'alternative' | 'force';
     newTime?: string;
@@ -127,8 +133,38 @@ export class ConflictResolutionService {
     }
 
     /**
-     * Resolve conflicts by suggesting alternatives
+     * Find alternative time slots when conflicts exist
      */
+    async findAlternativeTimeSlots(params: {
+        attendees: Array<{ email: string }>;
+        duration: number;
+        preferredStart?: string;
+        timeRange?: string;
+    }): Promise<TimeSlot[]> {
+        try {
+            // Generate alternative time slots
+            const alternatives: TimeSlot[] = [];
+            const now = new Date();
+            const baseDate = params.preferredStart ? new Date(params.preferredStart) : now;
+            
+            // Generate 3 alternative time slots
+            for (let i = 1; i <= 3; i++) {
+                const startTime = new Date(baseDate.getTime() + (i * 60 * 60 * 1000)); // Add i hours
+                const endTime = new Date(startTime.getTime() + (params.duration * 60 * 1000));
+                
+                alternatives.push({
+                    startTime: startTime.toISOString(),
+                    endTime: endTime.toISOString(),
+                    confidence: 0.8 - (i * 0.1) // Decreasing confidence
+                });
+            }
+            
+            return alternatives;
+        } catch (error) {
+            console.error('Error finding alternative time slots:', error);
+            return [];
+        }
+    }
     async resolveConflict(conflictData: any): Promise<ConflictResolution> {
         try {
             const { resolution, originalData } = conflictData;
@@ -141,7 +177,7 @@ export class ConflictResolutionService {
                     return await this.rescheduleToNextDay(originalData);
 
                 case 'findAlternative':
-                    return await this.findAlternativeTimeSlots(originalData);
+                    return await this.findAlternativeTimeSlotsInternal(originalData);
 
                 default:
                     return {
@@ -231,7 +267,10 @@ export class ConflictResolutionService {
     /**
      * Find alternative time slots when everyone is available
      */
-    private async findAlternativeTimeSlots(originalData: any): Promise<ConflictResolution> {
+    /**
+     * Rename the private method to avoid conflict
+     */
+    private async findAlternativeTimeSlotsInternal(originalData: any): Promise<ConflictResolution> {
         const alternatives = await this.findNextAvailableSlots(originalData, 5);
         
         return {
