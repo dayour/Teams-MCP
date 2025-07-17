@@ -1,0 +1,19 @@
+{
+  "type": "message",
+  "id": "test123",
+  "timestamp": "2025-07-10T12:00:00.000Z",
+  "channelId": "test",
+  "from": {
+    "id": "user1",
+    "name": "Test User"
+  },
+  "conversation": {
+    "id": "conv1"
+  },
+  "text": "Schedule a meeting with john@company.com tomorrow at 2 PM",
+  "recipient": {
+    "id": "bot1",
+    "name": "Scheduling Bot"
+  },
+  "serviceUrl": "http://localhost:4978"
+}

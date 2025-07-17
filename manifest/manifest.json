@@ -1,0 +1,76 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.16",
+    "version": "1.0.0",
+    "id": "YOUR_APP_ID_HERE",
+    "packageName": "com.company.teamsschedulingassistant",
+    "developer": {
+        "name": "Your Company",
+        "websiteUrl": "https://www.company.com",
+        "privacyUrl": "https://www.company.com/privacy",
+        "termsOfUseUrl": "https://www.company.com/terms"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "Scheduling Assistant",
+        "full": "Teams Intelligent Scheduling Assistant"
+    },
+    "description": {
+        "short": "AI-powered scheduling assistant for Microsoft Teams",
+        "full": "An intelligent bot that helps you schedule meetings, check availability, book rooms, and resolve conflicts using natural language commands."
+    },
+    "accentColor": "#FFFFFF",
+    "bots": [
+        {
+            "botId": "YOUR_BOT_ID_HERE",
+            "scopes": [
+                "personal",
+                "team",
+                "groupchat"
+            ],
+            "supportsFiles": false,
+            "isNotificationOnly": false,
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal",
+                        "team",
+                        "groupchat"
+                    ],
+                    "commands": [
+                        {
+                            "title": "Schedule Meeting",
+                            "description": "Schedule a new meeting with natural language"
+                        },
+                        {
+                            "title": "Check Availability",
+                            "description": "Check when attendees are available"
+                        },
+                        {
+                            "title": "Book Room",
+                            "description": "Find and book a meeting room"
+                        },
+                        {
+                            "title": "Help",
+                            "description": "Get help with scheduling commands"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "YOUR_DOMAIN_HERE"
+    ],
+    "webApplicationInfo": {
+        "id": "YOUR_AAD_APP_ID_HERE",
+        "resource": "https://graph.microsoft.com"
+    }
+}

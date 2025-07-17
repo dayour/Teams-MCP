@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Teams Scheduling Bot",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/lib/index.js",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env",
+            "preLaunchTask": "build",
+            "restart": true,
+            "runtimeArgs": ["--preserve-symlinks"]
+        },
+        {
+            "name": "Debug Teams Scheduling Bot",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/lib/index.js",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env",
+            "preLaunchTask": "build",
+            "sourceMaps": true,
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
