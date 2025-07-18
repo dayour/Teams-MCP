@@ -26,6 +26,40 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "chatParticipants": [
+      {
+        "id": "teams",
+        "name": "Teams",
+        "description": "Microsoft Teams integration for scheduling and calendar management",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "schedule",
+            "description": "Schedule a new meeting"
+          },
+          {
+            "name": "availability", 
+            "description": "Check availability of attendees"
+          },
+          {
+            "name": "calendar",
+            "description": "View your calendar"
+          },
+          {
+            "name": "rooms",
+            "description": "Find available meeting rooms"
+          },
+          {
+            "name": "cancel",
+            "description": "Cancel a meeting"
+          },
+          {
+            "name": "update",
+            "description": "Update a meeting"
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "teams-mcp.configure",
