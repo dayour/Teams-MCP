@@ -5,7 +5,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-const DEVICE_CODE_CLIENT_ID = '14d82eec-204b-4c2f-b7e0-446a91523b50'; // Microsoft Graph Command Line Tools
+const DEVICE_CODE_CLIENT_ID = process.env.DEVICE_CODE_CLIENT_ID || (() => {
+    throw new Error('Environment variable DEVICE_CODE_CLIENT_ID is not set.');
+})(); // Microsoft Graph Command Line Tools
 const SCOPES = [
     'https://graph.microsoft.com/Calendar.ReadWrite',
     'https://graph.microsoft.com/Calendars.Read.Shared',
