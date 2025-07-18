@@ -204,7 +204,7 @@ export class TeamsMCPExtension {
             }
 
             // Start the MCP server
-            this.mcpServerProcess = spawn('node', [serverPath], {
+            this.mcpServerProcess = spawn(process.execPath, [serverPath], {
                 env,
                 stdio: ['pipe', 'pipe', 'pipe']
             });
