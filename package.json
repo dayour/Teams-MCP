@@ -1,42 +1,55 @@
 {
-  "name": "teams-scheduling-assistant",
+  "name": "teams-mcp-server",
   "version": "1.0.0",
-  "description": "Intelligent Microsoft Teams scheduling assistant with meeting booking, calendar management, and room reservation capabilities",
+  "description": "Microsoft Teams Model Context Protocol (MCP) server for AI assistants like Claude Desktop",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build",
     "start": "node lib/index.js",
     "watch": "nodemon lib/index.js",
     "dev": "tsc --build && node lib/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mcp-server": "node lib/mcp-server.js",
+    "auth": "node lib/auth-helper.js auth",
+    "build-extension": "cd vscode-extension && npm run compile",
+    "setup": "node lib/setup.js install",
+    "setup-status": "node lib/setup.js status",
+    "uninstall": "node lib/setup.js uninstall",
+    "configure-claude": "node lib/claude-config.js configure"
   },
   "keywords": [
     "teams",
+    "mcp",
+    "model context protocol",
     "bot",
     "scheduling",
     "meetings",
     "calendar",
     "microsoft-graph",
-    "assistant"
+    "assistant",
+    "claude",
+    "ai"
   ],
   "author": "Teams Developer",
   "license": "MIT",
   "dependencies": {
+    "@azure/msal-node": "^2.6.6",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@modelcontextprotocol/sdk": "^1.16.0",
+    "adaptivecards": "^3.0.4",
+    "axios": "^1.6.5",
     "botbuilder": "^4.21.1",
     "botbuilder-azure-blobs": "^4.21.1",
     "botframework-connector": "^4.21.1",
-    "restify": "^11.1.0",
-    "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@azure/msal-node": "^2.6.6",
-    "adaptivecards": "^3.0.4",
-    "axios": "^1.6.5",
     "moment": "^2.30.1",
-    "node-cron": "^3.0.3"
+    "node-cron": "^3.0.3",
+    "restify": "^11.1.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
     "@types/restify": "^8.5.12",
-    "typescript": "^5.3.3",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "typescript": "^5.3.3"
   }
 }

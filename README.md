@@ -1,221 +1,142 @@
-# Teams Scheduling Assistant Bot 🤖📅
+# Teams MCP - Model Context Protocol for Microsoft Teams
 
-An intelligent Microsoft Teams bot that helps users schedule meetings, manage calendars, book rooms, and resolve scheduling conflicts using natural language processing and Microsoft Graph API.
+**Transform your AI assistant with powerful Microsoft Teams integration!**
 
-## 🌟 Features
+Teams MCP is a Model Context Protocol server that enables AI assistants like Claude Desktop to seamlessly interact with Microsoft Teams for calendar management, meeting scheduling, and room booking through natural language commands.
 
-### Core Scheduling Capabilities
-- **Smart Meeting Booking**: Schedule meetings using natural language commands
-- **Calendar Integration**: Connect with Microsoft Graph to check availability
-- **Conflict Detection**: Automatically detect and resolve scheduling conflicts
-- **Room Booking**: Find and reserve meeting rooms based on capacity and equipment needs
-- **Teams Integration**: Generate Teams meeting links automatically
+## 🚀 Quick Start
 
-### Intelligent Features
-- **Natural Language Processing**: Understand scheduling requests in plain English
-- **Availability Checking**: Check when attendees are free across calendars
-- **Smart Suggestions**: Recommend optimal meeting times based on patterns
-- **Conflict Resolution**: Provide alternative time slots when conflicts exist
-- **Proactive Notifications**: Send reminders and updates via Teams
+### Easy Installation (Recommended)
 
-### User Experience
-- **Adaptive Cards**: Rich interactive cards for scheduling workflows
-- **Conversational Interface**: Chat-based scheduling with contextual responses
-- **Multi-language Support**: Extensible for different languages and locales
-- **Accessibility**: Designed with accessibility best practices
+```bash
+# Clone the repository
+git clone https://github.com/dayour/Teams-MCP.git
+cd Teams-MCP
 
-## 🚀 Getting Started
+# Install and configure everything automatically
+npm install
+npm run setup
 
-### Prerequisites
-- Node.js 16+ and npm
-- Microsoft Teams developer account
-- Azure subscription for Bot Framework and Graph API
-- VS Code (recommended)
-
-### Installation
-
-1. **Clone and Install**
-   ```bash
-   git clone <repository-url>
-   cd teams-scheduling-assistant
-   npm install
-   ```
-
-2. **Environment Setup**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration values
-   ```
-
-3. **Required Environment Variables**
-   ```
-   MicrosoftAppId=your-bot-app-id
-   MicrosoftAppPassword=your-bot-app-password
-   CLIENT_ID=your-azure-app-client-id
-   CLIENT_SECRET=your-azure-app-client-secret
-   TENANT_ID=your-azure-tenant-id
-   PORT=3978
-   ```
-
-4. **Build and Run**
-   ```bash
-   npm run build
-   npm start
-   ```
-
-## 🏗️ Architecture
-
-### Project Structure
-```
-src/
-├── bots/
-│   └── schedulingBot.ts          # Main bot logic and conversation handling
-├── services/
-│   ├── graphService.ts           # Microsoft Graph API integration
-│   ├── schedulingCardService.ts  # Adaptive Cards for UI
-│   └── conflictResolutionService.ts # Conflict detection & resolution
-├── models/
-│   └── types.ts                  # TypeScript interfaces and types
-├── utils/
-│   ├── nlpUtils.ts              # Natural language processing
-│   └── dateTimeUtils.ts         # Date/time utility functions
-└── index.ts                     # Entry point and server setup
+# Start using with Claude Desktop!
 ```
 
-### Key Components
+### Manual Installation
 
-#### SchedulingBot (`src/bots/schedulingBot.ts`)
-The main bot class that handles:
-- Teams activity events (messages, adaptive card interactions)
-- Natural language intent recognition
-- Conversation flow management
-- Integration with backend services
+```bash
+# Install dependencies and build
+npm install && npm run build
 
-#### GraphService (`src/services/graphService.ts`)
-Microsoft Graph API integration for:
-- Calendar operations (create, update, delete meetings)
-- Availability checking (free/busy time lookup)
-- Room and resource booking
-- User profile and settings management
+# Authenticate with Microsoft
+npm run auth
 
-#### SchedulingCardService (`src/services/schedulingCardService.ts`)
-Creates rich interactive experiences with:
-- Scheduling forms and time pickers
-- Availability displays and conflict notifications
-- Room selection and booking confirmations
-- Help and onboarding cards
+# Configure Claude Desktop
+npm run configure-claude
 
-#### ConflictResolutionService (`src/services/conflictResolutionService.ts`)
-Intelligent scheduling assistance:
-- Conflict detection across multiple calendars
-- Alternative time slot suggestions
-- Automatic conflict resolution strategies
-- Meeting pattern analysis and recommendations
+# Start the MCP server
+npm run mcp-server
+```
+
+## 🎯 Features
+
+- **🤖 Natural Language Meeting Management**: Schedule, update, and cancel meetings with AI
+- **📅 Calendar Integration**: Check availability and get calendar overviews
+- **🏢 Room Booking**: Find and reserve meeting rooms with equipment requirements
+- **🔍 Conflict Resolution**: Smart alternative time suggestions
+- **🔐 Easy Authentication**: Device-based auth with no Azure setup required
+- **⚙️ Auto-Configuration**: Automatic Claude Desktop integration
 
 ## 💬 Usage Examples
 
-### Scheduling Commands
-- "Schedule a meeting with john@company.com tomorrow at 2 PM"
-- "Book the conference room for Friday afternoon"
-- "When is everyone available this week?"
-- "Find a 30-minute slot for our team standup"
-- "Move my 3 PM meeting to 4 PM"
+Once configured, use natural language with Claude Desktop:
 
-### Room Booking
-- "I need a room for 10 people with a projector"
-- "Book conference room A for tomorrow morning"
-- "Find a space near the executive floor"
-
-### Availability Queries
-- "What's my schedule looking like today?"
-- "When is Sarah free this week?"
-- "Show me available time slots for Monday"
-
-## 🛠️ Development
-
-### Build Commands
-```bash
-npm run build      # Compile TypeScript
-npm run watch      # Watch mode for development
-npm run dev        # Build and run in development mode
-npm start          # Run the compiled application
+```
+"Schedule a meeting with john@company.com tomorrow at 2 PM"
+"Find a conference room for 10 people with a projector"
+"When is everyone available this week?"
+"Reschedule my 3 PM meeting to avoid conflicts"
 ```
 
-### Code Structure Guidelines
-- **Services**: Stateless business logic and external API integration
-- **Models**: TypeScript interfaces and type definitions
-- **Utils**: Pure functions for common operations
-- **Bots**: Teams activity handlers and conversation logic
+## 🏗️ What's New
 
-### Adding New Features
-1. Define interfaces in `src/models/types.ts`
-2. Implement business logic in appropriate service files
-3. Add UI components in `schedulingCardService.ts`
-4. Update bot handlers in `schedulingBot.ts`
-5. Add utility functions as needed
+This repository has been transformed from a Teams bot into a **Model Context Protocol (MCP) server**:
+
+- ✅ **MCP Server**: Exposes Teams functionality via standardized protocol
+- ✅ **Claude Desktop Integration**: Works seamlessly with Claude Desktop
+- ✅ **VSCode Extension**: Auto-configuration and management
+- ✅ **Device Authentication**: No Azure app registration required
+- ✅ **Easy Setup**: One-command installation and configuration
+
+## 📋 Available Tools
+
+The MCP server provides these tools to AI assistants:
+
+| Tool | Description |
+|------|-------------|
+| `schedule_meeting` | Schedule new meetings with attendees |
+| `check_availability` | Check attendee availability for time ranges |
+| `find_available_rooms` | Find meeting rooms by capacity and equipment |
+| `cancel_meeting` | Cancel existing meetings |
+| `update_meeting` | Modify existing meetings |
+| `get_my_calendar` | Get calendar events for date ranges |
+| `resolve_conflicts` | Find alternative times when conflicts exist |
 
 ## 🔧 Configuration
 
-### Teams App Manifest
-The bot requires a Teams app manifest with appropriate permissions:
-- **Bot capabilities**: Messaging, adaptive cards
-- **Graph permissions**: Calendar.ReadWrite, Calendars.Read.Shared
-- **Scopes**: Personal, team, group chat
+### Authentication Methods
 
-### Microsoft Graph Permissions
-Required delegated permissions:
-- `Calendar.ReadWrite` - Create and modify meetings
-- `Calendar.Read.Shared` - Check others' availability
-- `Place.Read.All` - Access room information
-- `User.Read` - Basic user profile access
+**Device Authentication (Default)**
+- No Azure setup required
+- Uses Microsoft's device code flow
+- Perfect for individual users
 
-## 🧪 Testing
+**Azure App Registration**
+- For enterprise scenarios
+- Requires Azure AD configuration
+- More control over permissions
 
-### Bot Framework Emulator
-1. Download the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator)
-2. Connect to `http://localhost:3978/api/messages`
-3. Use your bot credentials for testing
+### Status Check
 
-### Teams Testing
-1. Upload the app package to Teams
-2. Install the bot in a team or personal scope
-3. Test conversational flows and adaptive card interactions
-
-## 📚 Documentation
-
-### Key Resources
-- [Bot Framework Documentation](https://docs.microsoft.com/en-us/azure/bot-service/)
-- [Microsoft Graph API](https://docs.microsoft.com/en-us/graph/)
-- [Teams Platform Documentation](https://docs.microsoft.com/en-us/microsoftteams/platform/)
-- [Adaptive Cards](https://adaptivecards.io/)
-
-### API Reference
-Detailed API documentation for each service is available in the source code comments using JSDoc format.
-
-## 🔒 Security
-
-### Authentication
-- Uses Microsoft App credentials for bot authentication
-- Implements OAuth 2.0 flow for Graph API access
-- Supports both application and delegated permissions
-
-### Data Privacy
-- No sensitive data stored locally
-- All calendar data accessed through Microsoft Graph
-- Follows Microsoft's data handling guidelines
-
-## 🚀 Deployment
-
-### Azure Deployment
-1. Create Azure Bot Service resource
-2. Configure app settings with environment variables
-3. Deploy code to Azure App Service
-4. Update Teams app manifest with production endpoint
-
-### Docker Support
-```dockerfile
-# Add Dockerfile for containerized deployment
+```bash
+npm run setup-status
 ```
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+Teams-MCP/
+├── src/
+│   ├── mcp-server.ts           # Main MCP server
+│   ├── auth-helper.ts          # Authentication utilities  
+│   ├── claude-config.ts        # Claude Desktop configuration
+│   ├── setup.ts               # Installation automation
+│   └── services/              # Microsoft Graph integration
+├── vscode-extension/          # VSCode extension for auto-config
+└── lib/                      # Compiled JavaScript
+```
+
+### Building
+
+```bash
+npm run build              # Build the project
+npm run build-extension    # Build VSCode extension
+```
+
+## 📖 Documentation
+
+- **[Installation Guide](TEAMS-MCP-README.md)** - Detailed setup instructions
+- **[Original Setup](SETUP.md)** - Legacy Teams bot setup (deprecated)
+- **[VSCode Extension](vscode-extension/)** - Extension documentation
+
+## 🔄 Migration from Teams Bot
+
+This project was originally a Teams bot and has been transformed into an MCP server:
+
+- **Teams Bot → MCP Server**: Core functionality preserved but exposed via MCP
+- **Restify Server → Stdio Protocol**: Changed from HTTP to MCP stdio transport
+- **Adaptive Cards → Tool Responses**: UI moved to AI assistant side
+- **Teams Integration → Universal AI**: Works with any MCP-compatible AI assistant
 
 ## 🤝 Contributing
 
@@ -231,11 +152,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙋‍♂️ Support
 
-For questions and support:
-- Create an issue in this repository
-- Check the [Teams Platform Community](https://docs.microsoft.com/en-us/microsoftteams/platform/feedback)
-- Review [Bot Framework samples](https://github.com/Microsoft/BotBuilder-Samples)
+- 📖 [Documentation](TEAMS-MCP-README.md)
+- 🐛 [Report Issues](https://github.com/dayour/Teams-MCP/issues)
+- 💬 [Discussions](https://github.com/dayour/Teams-MCP/discussions)
 
 ---
 
-**Built with ❤️ for Microsoft Teams using Bot Framework and Microsoft Graph**
+**Built with ❤️ for the AI assistant ecosystem**
+
+Transform your productivity with AI-powered Teams integration!

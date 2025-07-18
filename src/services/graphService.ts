@@ -1,5 +1,6 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthProvider } from '@microsoft/microsoft-graph-client';
+import { DeviceAuthHelper } from '../auth-helper.js';
 
 export interface Meeting {
     id?: string;
@@ -44,12 +45,36 @@ export interface Availability {
 }
 
 /**
+ * Custom Auth Provider for device authentication
+ */
+class DeviceAuthProvider {
+    private authHelper: DeviceAuthHelper;
+
+    constructor() {
+        this.authHelper = new DeviceAuthHelper();
+    }
+
+    async getAccessToken(): Promise<string> {
+        let token = await this.authHelper.getStoredToken();
+        
+        if (!token) {
+            console.error('No valid authentication found. Please run authentication first.');
+            token = await this.authHelper.authenticate();
+        }
+        
+        return token;
+    }
+}
+
+/**
  * Service for interacting with Microsoft Graph API for calendar and meeting operations
  */
 export class GraphService {
     private graphClient: Client | null = null;
+    private useDeviceAuth: boolean;
 
-    constructor() {
+    constructor(useDeviceAuth: boolean = true) {
+        this.useDeviceAuth = useDeviceAuth;
         // Initialize Graph client with authentication
         this.initializeGraphClient();
     }
@@ -58,9 +83,37 @@ export class GraphService {
      * Initialize Microsoft Graph client
      */
     private initializeGraphClient(): void {
-        // TODO: Implement proper authentication with MSAL
-        // For now, this is a placeholder structure
-        console.log('Graph client initialization placeholder');
+        try {
+            if (this.useDeviceAuth) {
+                // Use device authentication with custom auth provider
+                const authProvider = new DeviceAuthProvider();
+                
+                // Create a proper authentication provider
+                const customAuthProvider = {
+                    getAccessToken: async () => {
+                        return await authProvider.getAccessToken();
+                    }
+                };
+                
+                this.graphClient = Client.initWithMiddleware({
+                    authProvider: customAuthProvider as any
+                });
+            } else {
+                // Use app registration credentials from environment
+                const clientId = process.env.CLIENT_ID;
+                const clientSecret = process.env.CLIENT_SECRET;
+                const tenantId = process.env.TENANT_ID;
+
+                if (!clientId || !clientSecret || !tenantId) {
+                    throw new Error('Missing Azure app registration credentials');
+                }
+
+                // TODO: Implement client credentials flow for app registration
+                console.log('App registration authentication not yet implemented');
+            }
+        } catch (error) {
+            console.error('Failed to initialize Graph client:', error);
+        }
     }
 
     /**
@@ -195,12 +248,52 @@ export class GraphService {
     /**
      * Get user's calendar events for conflict detection
      */
-    async getCalendarEvents(userId: string, startTime: string, endTime: string): Promise<Meeting[]> {
+    async getCalendarEvents(startTime: string, endTime: string, userId?: string): Promise<Meeting[]> {
         try {
             // Mock calendar events - replace with actual Graph API call
             return [];
         } catch (error) {
             console.error('Error getting calendar events:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Check availability of attendees
+     */
+    async checkAvailability(attendeeEmails: string[], startTime: string, endTime: string): Promise<Availability[]> {
+        try {
+            // Mock availability check - replace with actual Graph API call
+            return attendeeEmails.map(email => ({
+                email,
+                freeBusyStatus: 'free' as const,
+                start: startTime,
+                end: endTime
+            }));
+        } catch (error) {
+            console.error('Error checking availability:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Find available rooms
+     */
+    async findAvailableRooms(startTime: string, endTime: string, capacity?: number, equipment?: string[]): Promise<Room[]> {
+        try {
+            // Mock room finding - replace with actual Graph API call
+            return [
+                {
+                    id: 'room1',
+                    displayName: 'Conference Room A',
+                    emailAddress: 'room-a@company.com',
+                    capacity: 10,
+                    equipment: ['projector', 'whiteboard'],
+                    isAvailable: true
+                }
+            ];
+        } catch (error) {
+            console.error('Error finding rooms:', error);
             throw error;
         }
     }
