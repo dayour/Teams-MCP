@@ -32,7 +32,7 @@ const mockVSCode = {
         showErrorMessage: (message: string) => console.log(`❌ ${message}`),
         showInformationMessage: (message: string) => console.log(`ℹ️ ${message}`)
     },
-    ThemeIcon: function(icon: string) { this.id = icon; }
+    ThemeIcon: function(icon: string) { (this as any).id = icon; }
 };
 
 // Mock context
