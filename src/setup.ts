@@ -78,7 +78,11 @@ class TeamsMCPInstaller {
         // Check Node.js version
         try {
             const nodeVersion = await this.runCommand('node --version');
-            const majorVersion = parseInt(nodeVersion.replace('v', '').split('.')[0]);
+            const versionMatch = nodeVersion.match(/^v(\d+)\.(\d+)\.(\d+)$/);
+            if (!versionMatch) {
+                throw new Error(`Unexpected Node.js version format: "${nodeVersion}". Please ensure Node.js 16+ is installed.`);
+            }
+            const majorVersion = parseInt(versionMatch[1], 10);
             if (majorVersion < 16) {
                 throw new Error(`Node.js 16+ required, found ${nodeVersion}`);
             }
