@@ -49,7 +49,29 @@ const UpdateMeetingSchema = z.object({
 /**
  * Microsoft Teams MCP Server
  * 
- * Provides Teams calendar and meeting management capabilities via MCP
+ * This class provides an implementation of a Model Context Protocol (MCP) server
+ * for managing Microsoft Teams calendar and meeting functionalities. It integrates
+ * with Microsoft Graph API to handle scheduling, availability checks, room searches,
+ * and other meeting-related operations.
+ * 
+ * ### Architecture
+ * - **Server:** The core MCP server instance that handles communication and tool registration.
+ * - **GraphService:** A service for interacting with Microsoft Graph API to perform calendar operations.
+ * - **ConflictResolutionService:** A service for resolving scheduling conflicts using data from GraphService.
+ * 
+ * ### Usage
+ * Instantiate the class and call the `run` method to start the server:
+ * 
+ * ```ts
+ * const server = new TeamsMCPServer();
+ * server.run().catch(console.error);
+ * ```
+ * 
+ * @class TeamsMCPServer
+ * @constructor
+ * @property {Server} server - The MCP server instance.
+ * @property {GraphService} graphService - Service for interacting with Microsoft Graph API.
+ * @property {ConflictResolutionService} conflictService - Service for resolving scheduling conflicts.
  */
 class TeamsMCPServer {
   private server: Server;
