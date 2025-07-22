@@ -2,7 +2,20 @@
 
 **Transform your AI assistant with powerful Microsoft Teams integration!**
 
-Teams MCP is a Model Context Protocol server that enables AI assistants like Claude Desktop to seamlessly interact with Microsoft Teams for calendar management, meeting scheduling, and room booking through natural language commands.
+Teams MCP is a Model Context Protocol server that enables AI assistants like Claude Desktop and **GitHub Copilot** to seamlessly interact with Microsoft Teams for calendar management, meeting scheduling, and room booking through natural language commands.
+
+## ✨ New: GitHub Copilot Integration
+
+🎯 **Use Teams directly in GitHub Copilot chat with the @teams participant!**
+
+```
+@teams /schedule meeting with john@company.com tomorrow at 2pm
+@teams /availability check who's free for Friday afternoon
+@teams /calendar show today's events
+@teams /rooms find conference room for 10 people
+```
+
+**[See GitHub Copilot Integration Guide →](GITHUB-COPILOT-INTEGRATION.md)**
 
 ## 🚀 Quick Start
 
@@ -39,16 +52,17 @@ npm run mcp-server
 ## 🎯 Features
 
 - **🤖 Natural Language Meeting Management**: Schedule, update, and cancel meetings with AI
-- **📅 Calendar Integration**: Check availability and get calendar overviews
+- **📅 Calendar Integration**: Check availability and get calendar overviews  
 - **🏢 Room Booking**: Find and reserve meeting rooms with equipment requirements
 - **🔍 Conflict Resolution**: Smart alternative time suggestions
 - **🔐 Easy Authentication**: Device-based auth with no Azure setup required
 - **⚙️ Auto-Configuration**: Automatic Claude Desktop integration
+- **💬 GitHub Copilot Integration**: Use @teams directly in VS Code Copilot chat
+- **🔌 VS Code Extension**: Full extension with server management and authentication
 
 ## 💬 Usage Examples
 
-Once configured, use natural language with Claude Desktop:
-
+### With Claude Desktop:
 ```
 "Schedule a meeting with john@company.com tomorrow at 2 PM"
 "Find a conference room for 10 people with a projector"
@@ -56,13 +70,22 @@ Once configured, use natural language with Claude Desktop:
 "Reschedule my 3 PM meeting to avoid conflicts"
 ```
 
+### With GitHub Copilot in VS Code:
+```
+@teams /schedule meeting with team@company.com Friday 3pm
+@teams /availability check john@company.com for tomorrow
+@teams /calendar show this week's meetings
+@teams /rooms find room for 8 people with video equipment
+```
+
 ## 🏗️ What's New
 
-This repository has been transformed from a Teams bot into a **Model Context Protocol (MCP) server**:
+This repository has been transformed from a Teams bot into a **Model Context Protocol (MCP) server** with full integration support:
 
 - ✅ **MCP Server**: Exposes Teams functionality via standardized protocol
 - ✅ **Claude Desktop Integration**: Works seamlessly with Claude Desktop
-- ✅ **VSCode Extension**: Auto-configuration and management
+- ✅ **GitHub Copilot Integration**: NEW! @teams chat participant in VS Code
+- ✅ **VSCode Extension**: Auto-configuration and server management
 - ✅ **Device Authentication**: No Azure app registration required
 - ✅ **Easy Setup**: One-command installation and configuration
 
