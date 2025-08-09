@@ -40,6 +40,7 @@ const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const child_process_1 = require("child_process");
+const chatParticipant_1 = require("./chatParticipant");
 /**
  * Teams MCP Extension
  *
@@ -53,8 +54,13 @@ class TeamsMCPExtension {
         this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
         this.statusBarItem.command = 'teams-mcp.status';
         context.subscriptions.push(this.statusBarItem);
+        // Initialize and register GitHub Copilot chat participant
+        this.chatParticipant = new chatParticipant_1.TeamsChatParticipant(context);
+        context.subscriptions.push({ dispose: () => this.chatParticipant.dispose() });
     }
     async activate() {
+        // Register the GitHub Copilot chat participant
+        this.chatParticipant.register();
         // Register commands
         this.context.subscriptions.push(vscode.commands.registerCommand('teams-mcp.configure', () => this.configure()), vscode.commands.registerCommand('teams-mcp.start', () => this.startServer()), vscode.commands.registerCommand('teams-mcp.stop', () => this.stopServer()), vscode.commands.registerCommand('teams-mcp.status', () => this.showStatus()));
         // Set up status bar
@@ -368,6 +374,7 @@ Auth Method: ${config.get('useDeviceAuth') ? 'Device Authentication' : 'App Regi
             this.mcpServerProcess.kill();
         }
         this.statusBarItem.dispose();
+        this.chatParticipant.dispose();
     }
 }
 exports.TeamsMCPExtension = TeamsMCPExtension;

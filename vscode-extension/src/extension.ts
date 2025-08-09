@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawn, ChildProcess } from 'child_process';
+import { TeamsChatParticipant } from './chatParticipant';
 
 /**
  * Teams MCP Extension
@@ -13,6 +14,7 @@ export class TeamsMCPExtension {
     private mcpServerProcess: ChildProcess | null = null;
     private statusBarItem: vscode.StatusBarItem;
     private context: vscode.ExtensionContext;
+    private chatParticipant: TeamsChatParticipant;
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
@@ -22,9 +24,16 @@ export class TeamsMCPExtension {
         );
         this.statusBarItem.command = 'teams-mcp.status';
         context.subscriptions.push(this.statusBarItem);
+
+        // Initialize and register GitHub Copilot chat participant
+        this.chatParticipant = new TeamsChatParticipant(context);
+        context.subscriptions.push({ dispose: () => this.chatParticipant.dispose() });
     }
 
     async activate() {
+        // Register the GitHub Copilot chat participant
+        this.chatParticipant.register();
+
         // Register commands
         this.context.subscriptions.push(
             vscode.commands.registerCommand('teams-mcp.configure', () => this.configure()),
@@ -417,6 +426,7 @@ Auth Method: ${config.get('useDeviceAuth') ? 'Device Authentication' : 'App Regi
             this.mcpServerProcess.kill();
         }
         this.statusBarItem.dispose();
+        this.chatParticipant.dispose();
     }
 }
 
