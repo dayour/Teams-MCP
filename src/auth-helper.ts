@@ -5,9 +5,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-const DEVICE_CODE_CLIENT_ID = process.env.DEVICE_CODE_CLIENT_ID || (() => {
-    throw new Error('Environment variable DEVICE_CODE_CLIENT_ID is not set.');
-})(); // Microsoft Graph Command Line Tools
+const getDeviceCodeClientId = () => {
+    const clientId = process.env.DEVICE_CODE_CLIENT_ID;
+    if (!clientId) {
+        throw new Error('Environment variable DEVICE_CODE_CLIENT_ID is not set.');
+    }
+    return clientId;
+};
 const SCOPES = [
     'https://graph.microsoft.com/Calendar.ReadWrite',
     'https://graph.microsoft.com/Calendars.Read.Shared',
@@ -36,7 +40,7 @@ class DeviceAuthHelper {
         // Initialize MSAL
         this.pca = new PublicClientApplication({
             auth: {
-                clientId: DEVICE_CODE_CLIENT_ID,
+                clientId: getDeviceCodeClientId(),
                 authority: 'https://login.microsoftonline.com/common',
             },
             cache: {

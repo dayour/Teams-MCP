@@ -72,11 +72,23 @@ class DeviceAuthProvider {
 export class GraphService {
     private graphClient: Client | null = null;
     private useDeviceAuth: boolean;
+    private isInitialized: boolean = false;
 
     constructor(useDeviceAuth: boolean = true) {
         this.useDeviceAuth = useDeviceAuth;
-        // Initialize Graph client with authentication
+        // Don't initialize immediately - do it lazily when needed
+    }
+
+    /**
+     * Ensure Graph client is initialized
+     */
+    private async ensureInitialized(): Promise<void> {
+        if (this.isInitialized) {
+            return;
+        }
+        
         this.initializeGraphClient();
+        this.isInitialized = true;
     }
 
     /**
@@ -120,6 +132,7 @@ export class GraphService {
      * Get user's calendar availability for the next few days
      */
     async getUserAvailability(userId?: string): Promise<Availability[]> {
+        await this.ensureInitialized();
         try {
             // Mock data for now - replace with actual Graph API call
             return [
@@ -178,6 +191,7 @@ export class GraphService {
      * Create a new meeting
      */
     async createMeeting(meetingData: any): Promise<Meeting> {
+        await this.ensureInitialized();
         try {
             // Mock meeting creation - replace with actual Graph API call
             const meeting: Meeting = {

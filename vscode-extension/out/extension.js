@@ -194,7 +194,7 @@ class TeamsMCPExtension {
                 env.TENANT_ID = await this.context.secrets.get('teams-mcp-tenant-id') || '';
             }
             // Start the MCP server
-            this.mcpServerProcess = (0, child_process_1.spawn)('node', [serverPath], {
+            this.mcpServerProcess = (0, child_process_1.spawn)(process.execPath, [serverPath], {
                 env,
                 stdio: ['pipe', 'pipe', 'pipe']
             });
