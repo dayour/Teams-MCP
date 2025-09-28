@@ -92,8 +92,8 @@ class DeviceAuthHelper {
                 deviceCodeCallback: (response: any) => {
                     console.log('\n🔐 Microsoft Authentication Required');
                     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-                    console.log(`📋 Device Code: ${response.userCode}`);
-                    console.log(`🌐 Please visit: ${response.verificationUri}`);
+                    console.log('📋 Device Code: ' + response.userCode);
+                    console.log('🌐 Please visit: ' + response.verificationUri);
                     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
                     console.log('1. Open the URL above in your browser');
                     console.log('2. Enter the device code when prompted');
@@ -106,7 +106,7 @@ class DeviceAuthHelper {
             const result = await this.pca.acquireTokenByDeviceCode(deviceCodeRequest);
             if (result) {
                 console.log('\n✅ Authentication successful!');
-                console.log(`👤 Signed in as: ${result.account?.username}`);
+                console.log('👤 Signed in as: ' + (result.account?.username || 'Unknown'));
                 
                 return result.accessToken;
             } else {
@@ -179,18 +179,15 @@ async function main() {
             break;
 
         default:
-            console.log(`
-Teams MCP Authentication Helper
-
-Usage:
-  auth-helper auth     - Start authentication flow
-  auth-helper check    - Check if authenticated
-  auth-helper clear    - Clear authentication cache
-
-Examples:
-  node auth-helper.js auth
-  node auth-helper.js check
-            `);
+            console.log('Teams MCP Authentication Helper\n');
+            console.log('Commands:');
+            console.log('  auth       Authenticate with Microsoft Graph');
+            console.log('  check      Check current authentication status');
+            console.log('  clear      Sign out and clear all tokens');
+            console.log('  help       Show this help message\n');
+            console.log('Examples:');
+            console.log('  node auth-helper.js auth');
+            console.log('  node auth-helper.js check');
             break;
     }
 }
