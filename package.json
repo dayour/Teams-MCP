@@ -8,14 +8,18 @@
     "start": "node lib/index.js",
     "watch": "nodemon lib/index.js",
     "dev": "tsc --build && node lib/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node lib/tests/testRunner.js",
+    "test:integration": "node lib/tests/integrationTest.js",
+    "validate": "node validate-integration.js",
     "mcp-server": "node lib/mcp-server.js",
     "auth": "node lib/auth-helper.js auth",
     "build-extension": "cd vscode-extension && npm run compile",
+    "build-all": "npm run build && npm run build-extension",
     "setup": "node lib/setup.js install",
     "setup-status": "node lib/setup.js status",
     "uninstall": "node lib/setup.js uninstall",
-    "configure-claude": "node lib/claude-config.js configure"
+    "configure-claude": "node lib/claude-config.js configure",
+    "clean": "rm -rf lib && rm -rf vscode-extension/out"
   },
   "keywords": [
     "teams",
