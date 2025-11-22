@@ -73,6 +73,10 @@ const UpdateMeetingSchema = z.object({
  * @property {GraphService} graphService - Service for interacting with Microsoft Graph API.
  * @property {ConflictResolutionService} conflictService - Service for resolving scheduling conflicts.
  */
+/**
+ * Microsoft Teams MCP Server
+ * Production-ready server with enhanced error handling and logging
+ */
 class TeamsMCPServer {
   private server: Server;
   private graphService: GraphService;
@@ -83,6 +87,7 @@ class TeamsMCPServer {
       {
         name: 'teams-mcp-server',
         version: '1.0.0',
+        description: 'Microsoft Teams integration for AI assistants'
       },
       {
         capabilities: {
@@ -95,6 +100,49 @@ class TeamsMCPServer {
     this.conflictService = new ConflictResolutionService(this.graphService);
 
     this.setupToolHandlers();
+    this.setupErrorHandling();
+  }
+
+  /**
+   * Setup global error handling for the MCP server
+   */
+  private setupErrorHandling(): void {
+    process.on('uncaughtException', (error) => {
+      console.error('❌ Uncaught Exception:', error);
+      console.error('Stack:', error.stack);
+      process.exit(1);
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+      // Don't exit in production, just log
+    });
+  }
+
+  /**
+   * Log error with context for better debugging
+   */
+  private logError(operation: string, error: unknown, context?: any): void {
+    const timestamp = new Date().toISOString();
+    console.error(`[${timestamp}] ❌ ${operation} failed:`);
+    console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
+    if (error instanceof Error && error.stack) {
+      console.error(`Stack: ${error.stack}`);
+    }
+    if (context) {
+      console.error(`Context: ${JSON.stringify(context, null, 2)}`);
+    }
+  }
+
+  /**
+   * Log success operations for monitoring
+   */
+  private logSuccess(operation: string, details?: any): void {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ✅ ${operation} succeeded`);
+    if (details) {
+      console.log(`Details: ${JSON.stringify(details, null, 2)}`);
+    }
   }
 
   private setupToolHandlers() {
@@ -221,35 +269,55 @@ class TeamsMCPServer {
       };
     });
 
-    // Handle tool execution
+    // Handle tool execution with enhanced error handling
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
+      const timestamp = new Date().toISOString();
+      
+      console.log(`[${timestamp}] 🔧 Executing tool: ${name}`);
+      console.log(`[${timestamp}] 📝 Arguments: ${JSON.stringify(args, null, 2)}`);
 
       try {
+        let result;
         switch (name) {
           case 'schedule_meeting':
-            return await this.handleScheduleMeeting(args);
+            result = await this.handleScheduleMeeting(args);
+            break;
           case 'check_availability':
-            return await this.handleCheckAvailability(args);
+            result = await this.handleCheckAvailability(args);
+            break;
           case 'find_available_rooms':
-            return await this.handleFindRooms(args);
+            result = await this.handleFindRooms(args);
+            break;
           case 'cancel_meeting':
-            return await this.handleCancelMeeting(args);
+            result = await this.handleCancelMeeting(args);
+            break;
           case 'update_meeting':
-            return await this.handleUpdateMeeting(args);
+            result = await this.handleUpdateMeeting(args);
+            break;
           case 'get_my_calendar':
-            return await this.handleGetCalendar(args);
+            result = await this.handleGetCalendar(args);
+            break;
           case 'resolve_conflicts':
-            return await this.handleResolveConflicts(args);
+            result = await this.handleResolveConflicts(args);
+            break;
           default:
-            throw new Error(`Unknown tool: ${name}`);
+            throw new Error(`Unknown tool: ${name}. Available tools: schedule_meeting, check_availability, find_available_rooms, cancel_meeting, update_meeting, get_my_calendar, resolve_conflicts`);
         }
+        
+        this.logSuccess(`Tool execution: ${name}`);
+        return result;
+        
       } catch (error) {
+        this.logError(`Tool execution: ${name}`, error, { args });
+        
+        // Return user-friendly error message
+        const errorMessage = this.formatUserError(name, error);
         return {
           content: [
             {
               type: 'text',
-              text: `Error executing ${name}: ${error instanceof Error ? error.message : String(error)}`
+              text: errorMessage
             }
           ],
           isError: true
@@ -258,10 +326,49 @@ class TeamsMCPServer {
     });
   }
 
-  private async handleScheduleMeeting(args: any) {
-    const parsed = ScheduleMeetingSchema.parse(args);
+  /**
+   * Format user-friendly error messages
+   */
+  private formatUserError(toolName: string, error: unknown): string {
+    const baseMessage = `❌ Failed to execute ${toolName.replace('_', ' ')}`;
     
+    if (error instanceof Error) {
+      // Handle specific error types with user-friendly messages
+      if (error.message.includes('authentication') || error.message.includes('401')) {
+        return `${baseMessage}: Authentication required. Please run the setup command to authenticate with Microsoft Graph.`;
+      }
+      
+      if (error.message.includes('permission') || error.message.includes('403')) {
+        return `${baseMessage}: Insufficient permissions. Please ensure your account has the required Calendar and Teams permissions.`;
+      }
+      
+      if (error.message.includes('not found') || error.message.includes('404')) {
+        return `${baseMessage}: The requested resource was not found. Please check your meeting ID or email addresses.`;
+      }
+      
+      if (error.message.includes('validation')) {
+        return `${baseMessage}: Invalid input parameters. ${error.message}`;
+      }
+      
+      if (error.message.includes('network') || error.message.includes('timeout')) {
+        return `${baseMessage}: Network error. Please check your internet connection and try again.`;
+      }
+      
+      return `${baseMessage}: ${error.message}`;
+    }
+    
+    return `${baseMessage}: An unexpected error occurred. Please try again or contact support.`;
+  }
+
+  private async handleScheduleMeeting(args: any) {
     try {
+      // Validate input parameters
+      const parsed = ScheduleMeetingSchema.parse(args);
+      
+      console.log(`📅 Scheduling meeting: ${parsed.subject}`);
+      console.log(`👥 Attendees: ${parsed.attendeeEmails.join(', ')}`);
+      console.log(`⏰ Time: ${parsed.startDateTime} - ${parsed.endDateTime}`);
+      
       const meeting: Meeting = {
         subject: parsed.subject,
         start: {
@@ -275,32 +382,80 @@ class TeamsMCPServer {
         attendees: parsed.attendeeEmails.map(email => ({
           emailAddress: {
             address: email,
-            name: email.split('@')[0]
+            name: email.split('@')[0] // Extract name from email for display
           }
         })),
         location: parsed.location ? {
           displayName: parsed.location
+        } : undefined,
+        onlineMeeting: parsed.includeTeamsLink ? {
+          joinUrl: '' // Will be populated by Graph API
         } : undefined
       };
 
       const result = await this.graphService.createMeeting(meeting);
       
+      const successMessage = [
+        `✅ Meeting scheduled successfully!`,
+        `📋 Subject: ${result.subject || parsed.subject}`,
+        `🆔 Meeting ID: ${result.id}`,
+        `⏰ Time: ${new Date(parsed.startDateTime).toLocaleString()} - ${new Date(parsed.endDateTime).toLocaleString()}`,
+        `👥 Attendees: ${parsed.attendeeEmails.join(', ')}`,
+      ];
+      
+      if (result.onlineMeeting?.joinUrl) {
+        successMessage.push(`🔗 Teams Link: ${result.onlineMeeting.joinUrl}`);
+      }
+      
+      if (parsed.location) {
+        successMessage.push(`📍 Location: ${parsed.location}`);
+      }
+
       return {
         content: [
           {
             type: 'text',
-            text: `Meeting "${parsed.subject}" scheduled successfully!\n` +
-                  `Meeting ID: ${result.id}\n` +
-                  `Start: ${parsed.startDateTime}\n` +
-                  `End: ${parsed.endDateTime}\n` +
-                  `Attendees: ${parsed.attendeeEmails.join(', ')}\n` +
-                  (parsed.location ? `Location: ${parsed.location}\n` : '') +
-                  (result.onlineMeeting?.joinUrl ? `Teams Link: ${result.onlineMeeting.joinUrl}` : '')
+            text: successMessage.join('\n')
           }
         ]
       };
+      
     } catch (error) {
-      throw new Error(`Failed to schedule meeting: ${error instanceof Error ? error.message : String(error)}`);
+      // Handle specific scheduling errors
+      if (error instanceof Error) {
+        if (error.message.includes('conflict')) {
+          // Try to detect conflicts
+          console.log('🔄 Conflict detected, checking details...');
+          try {
+            const conflicts = await this.conflictService.detectConflicts({
+              startTime: args.startDateTime,
+              endTime: args.endDateTime,
+              attendees: args.attendeeEmails
+            });
+            
+            if (conflicts.length > 0) {
+              const conflictDetails = conflicts.map(c => 
+                `• ${c.attendee}: ${c.type} at ${c.time} (${c.details})`
+              ).join('\n');
+              
+              return {
+                content: [
+                  {
+                    type: 'text',
+                    text: `⚠️ Scheduling conflict detected!\n\n` +
+                          `Conflicts:\n${conflictDetails}\n\n` +
+                          `💡 Please try a different time slot or check with the attendees for their availability.`
+                  }
+                ]
+              };
+            }
+          } catch (conflictError) {
+            console.error('Failed to analyze conflicts:', conflictError);
+          }
+        }
+      }
+      
+      throw error; // Re-throw to be handled by main error handler
     }
   }
 
