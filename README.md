@@ -186,17 +186,25 @@ npm run build-all          # Build everything
 # Build Docker image
 docker build -t teams-mcp:latest .
 
-# Run with docker-compose
+# Run with docker-compose (recommended)
 docker-compose up -d
 
-# Or run standalone
-docker run -d -p 3978:3978 --name teams-mcp teams-mcp:latest
+# Check logs
+docker-compose logs -f teams-mcp
+
+# Stop
+docker-compose down
 ```
+
+**See [Docker Deployment Guide](DOCKER.md) for production deployment details.**
 
 ## Documentation
 
 - **[Installation Guide](TEAMS-MCP-README.md)** - Detailed setup instructions
+- **[API Reference](API.md)** - Complete API documentation for all MCP tools
+- **[Docker Guide](DOCKER.md)** - Production deployment with Docker
 - **[GitHub Copilot Guide](GITHUB-COPILOT-INTEGRATION.md)** - Copilot integration
+- **[Changelog](CHANGELOG.md)** - Version history and release notes
 - **[Original Setup](SETUP.md)** - Legacy Teams bot setup (deprecated)
 - **[VSCode Extension](vscode-extension/)** - Extension documentation
 
