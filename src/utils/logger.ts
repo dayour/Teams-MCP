@@ -14,7 +14,6 @@ export class Logger {
     private static instance: Logger;
     private logLevel: LogLevel;
     private enableConsole: boolean;
-    private enableFile: boolean;
 
     private constructor() {
         // Determine log level from environment or default to INFO
@@ -22,7 +21,6 @@ export class Logger {
         this.logLevel = this.parseLogLevel(envLevel) || LogLevel.INFO;
         
         this.enableConsole = process.env.LOG_CONSOLE !== 'false';
-        this.enableFile = process.env.LOG_FILE === 'true';
     }
 
     static getInstance(): Logger {

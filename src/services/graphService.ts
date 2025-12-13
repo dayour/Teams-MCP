@@ -380,12 +380,12 @@ export class GraphService {
      * 0 = free, 1 = tentative, 2 = busy, 3 = out of office, 4 = working elsewhere
      */
     private parseFreebusy(availabilityView: string): 'free' | 'busy' | 'tentative' | 'outOfOffice' {
-        if (availabilityView.includes('2') || availabilityView.includes('3')) {
+        if (availabilityView.includes('3')) {
+            return 'outOfOffice';
+        } else if (availabilityView.includes('2') || availabilityView.includes('4')) {
             return 'busy';
         } else if (availabilityView.includes('1')) {
             return 'tentative';
-        } else if (availabilityView.includes('3')) {
-            return 'outOfOffice';
         }
         return 'free';
     }
