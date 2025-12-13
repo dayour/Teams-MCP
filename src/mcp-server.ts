@@ -9,6 +9,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { GraphService, Meeting, Room } from './services/graphService.js';
 import { ConflictResolutionService, TimeSlot } from './services/conflictResolutionService.js';
+import { log } from './utils/logger.js';
 import { z } from 'zod';
 
 // Define schemas for tool arguments
@@ -108,13 +109,12 @@ class TeamsMCPServer {
    */
   private setupErrorHandling(): void {
     process.on('uncaughtException', (error) => {
-      console.error('❌ Uncaught Exception:', error);
-      console.error('Stack:', error.stack);
+      log.error('Uncaught Exception', error);
       process.exit(1);
     });
 
     process.on('unhandledRejection', (reason, promise) => {
-      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+      log.error('Unhandled Rejection', reason instanceof Error ? reason : new Error(String(reason)));
       // Don't exit in production, just log
     });
   }
@@ -123,26 +123,14 @@ class TeamsMCPServer {
    * Log error with context for better debugging
    */
   private logError(operation: string, error: unknown, context?: any): void {
-    const timestamp = new Date().toISOString();
-    console.error(`[${timestamp}] ❌ ${operation} failed:`);
-    console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
-    if (error instanceof Error && error.stack) {
-      console.error(`Stack: ${error.stack}`);
-    }
-    if (context) {
-      console.error(`Context: ${JSON.stringify(context, null, 2)}`);
-    }
+    log.error(`${operation} failed`, error instanceof Error ? error : new Error(String(error)), context);
   }
 
   /**
    * Log success operations for monitoring
    */
   private logSuccess(operation: string, details?: any): void {
-    const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ✅ ${operation} succeeded`);
-    if (details) {
-      console.log(`Details: ${JSON.stringify(details, null, 2)}`);
-    }
+    log.info(`${operation} succeeded`, details);
   }
 
   private setupToolHandlers() {
@@ -272,10 +260,9 @@ class TeamsMCPServer {
     // Handle tool execution with enhanced error handling
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
-      const timestamp = new Date().toISOString();
+      const startTime = Date.now();
       
-      console.log(`[${timestamp}] 🔧 Executing tool: ${name}`);
-      console.log(`[${timestamp}] 📝 Arguments: ${JSON.stringify(args, null, 2)}`);
+      log.info(`Executing tool: ${name}`, { tool: name, args });
 
       try {
         let result;
@@ -305,6 +292,8 @@ class TeamsMCPServer {
             throw new Error(`Unknown tool: ${name}. Available tools: schedule_meeting, check_availability, find_available_rooms, cancel_meeting, update_meeting, get_my_calendar, resolve_conflicts`);
         }
         
+        const duration = Date.now() - startTime;
+        log.toolExecution(name, args, duration);
         this.logSuccess(`Tool execution: ${name}`);
         return result;
         
@@ -660,6 +649,10 @@ class TeamsMCPServer {
   async run() {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
+    log.info('Teams MCP Server started successfully', { 
+      version: '1.0.0',
+      transport: 'stdio'
+    });
     console.error('Teams MCP Server running on stdio');
   }
 }

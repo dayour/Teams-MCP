@@ -1,6 +1,7 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthProvider } from '@microsoft/microsoft-graph-client';
 import { DeviceAuthHelper } from '../auth-helper.js';
+import { log } from '../utils/logger.js';
 
 export interface Meeting {
     id?: string;
@@ -207,6 +208,8 @@ export class GraphService {
             throw new Error('Graph client not initialized');
         }
         
+        const startTime = Date.now();
+        
         try {
             const event = {
                 subject: meetingData.subject,
@@ -222,7 +225,9 @@ export class GraphService {
                 .api('/me/events')
                 .post(event);
 
-            console.log('Created meeting via Graph API:', response.id);
+            const duration = Date.now() - startTime;
+            log.graphAPI('/me/events', 'POST', true, duration);
+            log.info('Created meeting via Graph API', { meetingId: response.id });
             
             return {
                 id: response.id,
@@ -234,7 +239,9 @@ export class GraphService {
                 onlineMeeting: response.onlineMeeting ? { joinUrl: response.onlineMeeting.joinUrl } : undefined
             };
         } catch (error) {
-            console.error('Error creating meeting:', error);
+            const duration = Date.now() - startTime;
+            log.graphAPI('/me/events', 'POST', false, duration);
+            log.error('Error creating meeting', error);
             throw new Error(`Failed to create meeting: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
