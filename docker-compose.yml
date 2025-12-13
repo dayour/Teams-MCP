@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  teams-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: teams-mcp:latest
+    container_name: teams-mcp-server
+    restart: unless-stopped
+    
+    environment:
+      # Device authentication client ID (set via .env file)
+      - DEVICE_CODE_CLIENT_ID=${DEVICE_CODE_CLIENT_ID}
+      
+      # Optional: Azure app registration (if not using device auth)
+      - CLIENT_ID=${CLIENT_ID:-}
+      - CLIENT_SECRET=${CLIENT_SECRET:-}
+      - TENANT_ID=${TENANT_ID:-}
+      
+      # Server configuration
+      - NODE_ENV=production
+      - PORT=${PORT:-3978}
+      
+    ports:
+      - "${PORT:-3978}:3978"
+    
+    volumes:
+      # Persist authentication tokens
+      - teams-mcp-tokens:/home/appuser/.teams-mcp
+      
+      # Optional: Mount custom configuration
+      # - ./config:/app/config:ro
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  teams-mcp-tokens:
+    driver: local
+
+networks:
+  default:
+    name: teams-mcp-network

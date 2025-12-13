@@ -4,9 +4,9 @@
 
 Teams MCP provides seamless integration between AI assistants (like Claude Desktop) and Microsoft Teams, enabling natural language control of your calendar, meetings, and room bookings.
 
-## 🚀 Features
+## Features
 
-### 🤖 AI-Powered Meeting Management
+### AI-Powered Meeting Management
 - **Schedule meetings** with natural language commands
 - **Check availability** across multiple attendees  
 - **Book meeting rooms** with capacity and equipment requirements
@@ -14,20 +14,20 @@ Teams MCP provides seamless integration between AI assistants (like Claude Deskt
 - **Update and cancel** meetings easily
 - **Get calendar overview** for any date range
 
-### 🎯 Easy Installation
+### Easy Installation
 - **No Azure app registration required** - uses device authentication
 - **VSCode extension** for automatic setup and configuration
 - **Claude Desktop integration** with automatic config generation
 - **One-click authentication** flow
 
-### 🔧 Smart Capabilities
+### Smart Capabilities
 - Natural language processing for meeting requests
 - Conflict detection and resolution
 - Room availability checking with equipment filtering
 - Teams meeting link generation
 - Multi-attendee availability checking
 
-## 📦 Installation Options
+## Installation Options
 
 ### Option 1: VSCode Extension (Recommended)
 
@@ -76,7 +76,7 @@ Teams MCP provides seamless integration between AI assistants (like Claude Deskt
    npm run mcp-server
    ```
 
-## 🎯 Usage Examples
+## Usage Examples
 
 Once installed, you can use natural language with your AI assistant:
 
@@ -114,7 +114,7 @@ Once installed, you can use natural language with your AI assistant:
 "Book conference room A for my team standup"
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Authentication Methods
 
@@ -138,7 +138,7 @@ CLIENT_SECRET=your-azure-app-client-secret
 TENANT_ID=your-azure-tenant-id
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -161,7 +161,7 @@ TENANT_ID=your-azure-tenant-id
 - **Authentication Helper**: Handles Microsoft Graph authentication
 - **Claude Config**: Automatically configures Claude Desktop
 
-## 🛠️ Development
+## Development
 
 ### Building from Source
 
@@ -207,7 +207,7 @@ Teams-MCP/
 └── lib/                      # Compiled JavaScript
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -233,7 +233,7 @@ Run the MCP server with debug logging:
 DEBUG=true npm run mcp-server
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -241,33 +241,32 @@ DEBUG=true npm run mcp-server
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📋 Requirements
+## Requirements
 
 - **Node.js** 16+ and npm
 - **Microsoft account** with Teams/Office 365 access
 - **Claude Desktop** (for AI assistant integration)
 - **VSCode** (for extension-based setup)
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
 - **No data storage**: All calendar data accessed through Microsoft Graph
 - **Token security**: Authentication tokens stored securely in OS keychain
 - **Minimal permissions**: Only requests necessary Microsoft Graph permissions
 - **Open source**: Full source code available for security review
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙋‍♂️ Support
+## Support
 
-- 📖 [Documentation](https://github.com/dayour/Teams-MCP/wiki)
-- 🐛 [Report Issues](https://github.com/dayour/Teams-MCP/issues)
-- 💬 [Discussions](https://github.com/dayour/Teams-MCP/discussions)
-- 📧 [Contact](mailto:support@teams-mcp.com)
+- [Documentation](https://github.com/dayour/Teams-MCP/wiki)
+- [Report Issues](https://github.com/dayour/Teams-MCP/issues)
+- [Discussions](https://github.com/dayour/Teams-MCP/discussions)
 
 ---
 
-**Built with ❤️ for the AI assistant ecosystem**
+**Built for the AI assistant ecosystem**
 
-Transform your productivity with AI-powered Teams integration!
+Transform your productivity with AI-powered Teams integration.
