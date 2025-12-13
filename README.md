@@ -131,6 +131,24 @@ The MCP server provides these tools to AI assistants:
 - Requires Azure AD configuration
 - More control over permissions
 
+### Multiple Profiles Support
+
+Teams MCP supports multiple profiles for different Microsoft tenants or users:
+
+```bash
+# Create a new profile
+npm run profile create work 14d82eec-204b-4c2f-b7e8-296a70dab67e
+
+# List all profiles
+npm run profile list
+
+# Switch to a different profile
+npm run profile use work
+
+# Show active profile
+npm run profile active
+```
+
 ### Status Check
 
 ```bash
