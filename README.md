@@ -1,12 +1,22 @@
 # Teams MCP - Model Context Protocol for Microsoft Teams
 
-**Transform your AI assistant with powerful Microsoft Teams integration!**
+```
+ _____                          __  __  ____ ____  
+|_   _|__  __ _ _ __ ___  ___  |  \/  |/ ___|  _ \ 
+  | |/ _ \/ _` | '_ ` _ \/ __| | |\/| | |   | |_) |
+  | |  __/ (_| | | | | | \__ \ | |  | | |___|  __/ 
+  |_|\___|\__,_|_| |_| |_|___/ |_|  |_|\____|_|    
+                                                    
+  Microsoft Teams Integration for AI Assistants
+```
 
-Teams MCP is a Model Context Protocol server that enables AI assistants like Claude Desktop and **GitHub Copilot** to seamlessly interact with Microsoft Teams for calendar management, meeting scheduling, and room booking through natural language commands.
+**Transform your AI assistant with powerful Microsoft Teams integration**
 
-## ✨ New: GitHub Copilot Integration
+Teams MCP is a production-ready Model Context Protocol server that enables AI assistants like Claude Desktop and GitHub Copilot to seamlessly interact with Microsoft Teams for calendar management, meeting scheduling, and room booking through natural language commands.
 
-🎯 **Use Teams directly in GitHub Copilot chat with the @teams participant!**
+## New: GitHub Copilot Integration
+
+**Use Teams directly in GitHub Copilot chat with the @teams participant**
 
 ```
 @teams /schedule meeting with john@company.com tomorrow at 2pm
@@ -15,9 +25,9 @@ Teams MCP is a Model Context Protocol server that enables AI assistants like Cla
 @teams /rooms find conference room for 10 people
 ```
 
-**[See GitHub Copilot Integration Guide →](GITHUB-COPILOT-INTEGRATION.md)**
+**[See GitHub Copilot Integration Guide](GITHUB-COPILOT-INTEGRATION.md)**
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Easy Installation (Recommended)
 
@@ -30,7 +40,7 @@ cd Teams-MCP
 npm install
 npm run setup
 
-# Start using with Claude Desktop!
+# Start using with Claude Desktop
 ```
 
 ### Manual Installation
@@ -49,18 +59,20 @@ npm run configure-claude
 npm run mcp-server
 ```
 
-## 🎯 Features
+## Features
 
-- **🤖 Natural Language Meeting Management**: Schedule, update, and cancel meetings with AI
-- **📅 Calendar Integration**: Check availability and get calendar overviews  
-- **🏢 Room Booking**: Find and reserve meeting rooms with equipment requirements
-- **🔍 Conflict Resolution**: Smart alternative time suggestions
-- **🔐 Easy Authentication**: Device-based auth with no Azure setup required
-- **⚙️ Auto-Configuration**: Automatic Claude Desktop integration
-- **💬 GitHub Copilot Integration**: Use @teams directly in VS Code Copilot chat
-- **🔌 VS Code Extension**: Full extension with server management and authentication
+- **Natural Language Meeting Management**: Schedule, update, and cancel meetings with AI
+- **Calendar Integration**: Check availability and get calendar overviews  
+- **Room Booking**: Find and reserve meeting rooms with equipment requirements
+- **Conflict Resolution**: Smart alternative time suggestions
+- **Easy Authentication**: Device-based auth with no Azure setup required
+- **Auto-Configuration**: Automatic Claude Desktop integration
+- **GitHub Copilot Integration**: Use @teams directly in VS Code Copilot chat
+- **VS Code Extension**: Full extension with server management and authentication
+- **Docker Support**: Containerized deployment for production environments
+- **Persistent Profiles**: Multiple profile support for different Microsoft tenants
 
-## 💬 Usage Examples
+## Usage Examples
 
 ### With Claude Desktop:
 ```
@@ -78,24 +90,26 @@ npm run mcp-server
 @teams /rooms find room for 8 people with video equipment
 ```
 
-## 🏗️ What's New
+## Architecture
 
 This repository has been transformed from a Teams bot into a **Model Context Protocol (MCP) server** with full integration support:
 
-- ✅ **MCP Server**: Exposes Teams functionality via standardized protocol
-- ✅ **Claude Desktop Integration**: Works seamlessly with Claude Desktop
-- ✅ **GitHub Copilot Integration**: NEW! @teams chat participant in VS Code
-- ✅ **VSCode Extension**: Auto-configuration and server management
-- ✅ **Device Authentication**: No Azure app registration required
-- ✅ **Easy Setup**: One-command installation and configuration
+- **MCP Server**: Exposes Teams functionality via standardized protocol
+- **Claude Desktop Integration**: Works seamlessly with Claude Desktop
+- **GitHub Copilot Integration**: @teams chat participant in VS Code
+- **VSCode Extension**: Auto-configuration and server management
+- **Device Authentication**: No Azure app registration required
+- **Microsoft Graph API**: Full integration with Microsoft Graph for calendar operations
+- **Docker Support**: Production-ready containerized deployment
+- **Easy Setup**: One-command installation and configuration
 
-## 📋 Available Tools
+## Available Tools
 
 The MCP server provides these tools to AI assistants:
 
 | Tool | Description |
 |------|-------------|
-| `schedule_meeting` | Schedule new meetings with attendees |
+| `schedule_meeting` | Schedule new meetings with attendees and Teams links |
 | `check_availability` | Check attendee availability for time ranges |
 | `find_available_rooms` | Find meeting rooms by capacity and equipment |
 | `cancel_meeting` | Cancel existing meetings |
@@ -103,7 +117,7 @@ The MCP server provides these tools to AI assistants:
 | `get_my_calendar` | Get calendar events for date ranges |
 | `resolve_conflicts` | Find alternative times when conflicts exist |
 
-## 🔧 Configuration
+## Configuration
 
 ### Authentication Methods
 
@@ -117,13 +131,31 @@ The MCP server provides these tools to AI assistants:
 - Requires Azure AD configuration
 - More control over permissions
 
+### Multiple Profiles Support
+
+Teams MCP supports multiple profiles for different Microsoft tenants or users:
+
+```bash
+# Create a new profile
+npm run profile create work 14d82eec-204b-4c2f-b7e8-296a70dab67e
+
+# List all profiles
+npm run profile list
+
+# Switch to a different profile
+npm run profile use work
+
+# Show active profile
+npm run profile active
+```
+
 ### Status Check
 
 ```bash
 npm run setup-status
 ```
 
-## 🛠️ Development
+## Development
 
 ### Project Structure
 
@@ -136,6 +168,7 @@ Teams-MCP/
 │   ├── setup.ts               # Installation automation
 │   └── services/              # Microsoft Graph integration
 ├── vscode-extension/          # VSCode extension for auto-config
+├── docker/                    # Docker configuration
 └── lib/                      # Compiled JavaScript
 ```
 
@@ -144,24 +177,47 @@ Teams-MCP/
 ```bash
 npm run build              # Build the project
 npm run build-extension    # Build VSCode extension
+npm run build-all          # Build everything
 ```
 
-## 📖 Documentation
+### Docker Deployment
+
+```bash
+# Build Docker image
+docker build -t teams-mcp:latest .
+
+# Run with docker-compose (recommended)
+docker-compose up -d
+
+# Check logs
+docker-compose logs -f teams-mcp
+
+# Stop
+docker-compose down
+```
+
+**See [Docker Deployment Guide](DOCKER.md) for production deployment details.**
+
+## Documentation
 
 - **[Installation Guide](TEAMS-MCP-README.md)** - Detailed setup instructions
+- **[API Reference](API.md)** - Complete API documentation for all MCP tools
+- **[Docker Guide](DOCKER.md)** - Production deployment with Docker
+- **[GitHub Copilot Guide](GITHUB-COPILOT-INTEGRATION.md)** - Copilot integration
+- **[Changelog](CHANGELOG.md)** - Version history and release notes
 - **[Original Setup](SETUP.md)** - Legacy Teams bot setup (deprecated)
 - **[VSCode Extension](vscode-extension/)** - Extension documentation
 
-## 🔄 Migration from Teams Bot
+## Migration from Teams Bot
 
 This project was originally a Teams bot and has been transformed into an MCP server:
 
-- **Teams Bot → MCP Server**: Core functionality preserved but exposed via MCP
-- **Restify Server → Stdio Protocol**: Changed from HTTP to MCP stdio transport
-- **Adaptive Cards → Tool Responses**: UI moved to AI assistant side
-- **Teams Integration → Universal AI**: Works with any MCP-compatible AI assistant
+- **Teams Bot to MCP Server**: Core functionality preserved but exposed via MCP
+- **Restify Server to Stdio Protocol**: Changed from HTTP to MCP stdio transport
+- **Adaptive Cards to Tool Responses**: UI moved to AI assistant side
+- **Teams Integration to Universal AI**: Works with any MCP-compatible AI assistant
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -169,18 +225,18 @@ This project was originally a Teams bot and has been transformed into an MCP ser
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙋‍♂️ Support
+## Support
 
-- 📖 [Documentation](TEAMS-MCP-README.md)
-- 🐛 [Report Issues](https://github.com/dayour/Teams-MCP/issues)
-- 💬 [Discussions](https://github.com/dayour/Teams-MCP/discussions)
+- [Documentation](TEAMS-MCP-README.md)
+- [Report Issues](https://github.com/dayour/Teams-MCP/issues)
+- [Discussions](https://github.com/dayour/Teams-MCP/discussions)
 
 ---
 
-**Built with ❤️ for the AI assistant ecosystem**
+**Built for the AI assistant ecosystem**
 
-Transform your productivity with AI-powered Teams integration!
+Transform your productivity with AI-powered Teams integration.

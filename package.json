@@ -13,6 +13,7 @@
     "validate": "node validate-integration.js",
     "mcp-server": "node lib/mcp-server.js",
     "auth": "node lib/auth-helper.js auth",
+    "profile": "node lib/profileManager.js",
     "build-extension": "cd vscode-extension && npm run compile",
     "build-all": "npm run build && npm run build-extension",
     "setup": "node lib/setup.js install",

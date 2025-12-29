@@ -1,6 +1,7 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AuthProvider } from '@microsoft/microsoft-graph-client';
 import { DeviceAuthHelper } from '../auth-helper.js';
+import { log } from '../utils/logger.js';
 
 export interface Meeting {
     id?: string;
@@ -129,94 +130,119 @@ export class GraphService {
     }
 
     /**
-     * Get user's calendar availability for the next few days
+     * Get user's calendar availability for the next few days using Microsoft Graph API
      */
     async getUserAvailability(userId?: string): Promise<Availability[]> {
         await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock data for now - replace with actual Graph API call
-            return [
-                {
-                    email: 'user@company.com',
-                    freeBusyStatus: 'free',
-                    start: new Date().toISOString(),
-                    end: new Date(Date.now() + 60 * 60 * 1000).toISOString()
-                }
-            ];
+            const startTime = new Date().toISOString();
+            const endTime = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // Next 7 days
+            
+            const scheduleId = userId || 'me';
+            const request = {
+                schedules: [{ scheduleId: scheduleId, scheduleType: 'user' }],
+                startTime: { dateTime: startTime, timeZone: 'UTC' },
+                endTime: { dateTime: endTime, timeZone: 'UTC' },
+                availabilityViewInterval: 60
+            };
+
+            const response = await this.graphClient
+                .api('/me/calendar/getSchedule')
+                .post(request);
+
+            const schedule = response.value[0];
+            return [{
+                email: schedule.scheduleId,
+                freeBusyStatus: this.parseFreebusy(schedule.availabilityView || ''),
+                start: startTime,
+                end: endTime
+            }];
         } catch (error) {
             console.error('Error getting user availability:', error);
-            throw error;
+            throw new Error(`Failed to get user availability: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     /**
-     * Get available meeting rooms
+     * Get available meeting rooms using Microsoft Graph API
      */
     async getAvailableRooms(): Promise<Room[]> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock data for now - replace with actual Graph API call
-            return [
-                {
-                    id: 'room1',
-                    displayName: 'Conference Room A',
-                    emailAddress: 'room-a@company.com',
-                    capacity: 10,
-                    equipment: ['projector', 'whiteboard', 'video_conference'],
-                    isAvailable: true
-                },
-                {
-                    id: 'room2',
-                    displayName: 'Conference Room B',
-                    emailAddress: 'room-b@company.com',
-                    capacity: 6,
-                    equipment: ['whiteboard', 'video_conference'],
-                    isAvailable: true
-                },
-                {
-                    id: 'room3',
-                    displayName: 'Meeting Room C',
-                    emailAddress: 'room-c@company.com',
-                    capacity: 4,
-                    equipment: ['whiteboard'],
-                    isAvailable: false
-                }
-            ];
+            const response = await this.graphClient
+                .api('/places/microsoft.graph.room')
+                .get();
+
+            return response.value.map((place: any) => ({
+                id: place.id,
+                displayName: place.displayName,
+                emailAddress: place.emailAddress,
+                capacity: place.capacity,
+                equipment: place.equipment || [],
+                isAvailable: true // Default to true, check availability separately with specific times
+            }));
         } catch (error) {
             console.error('Error getting available rooms:', error);
-            throw error;
+            console.warn('Note: Room listing requires appropriate Microsoft Graph permissions and organizational configuration');
+            return [];
         }
     }
 
     /**
-     * Create a new meeting
+     * Create a new meeting using Microsoft Graph API
      */
     async createMeeting(meetingData: any): Promise<Meeting> {
         await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
+        const startTime = Date.now();
+        
         try {
-            // Mock meeting creation - replace with actual Graph API call
-            const meeting: Meeting = {
-                id: 'meeting_' + Date.now(),
-                subject: meetingData.subject || 'New Meeting',
-                start: {
-                    dateTime: meetingData.startTime || new Date().toISOString(),
-                    timeZone: 'UTC'
-                },
-                end: {
-                    dateTime: meetingData.endTime || new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-                    timeZone: 'UTC'
-                },
-                attendees: meetingData.attendees || [],
+            const event = {
+                subject: meetingData.subject,
+                start: meetingData.start,
+                end: meetingData.end,
+                attendees: meetingData.attendees,
                 location: meetingData.location,
-                onlineMeeting: {
-                    joinUrl: 'https://teams.microsoft.com/l/meetup-join/...'
-                }
+                isOnlineMeeting: meetingData.onlineMeeting !== undefined,
+                onlineMeetingProvider: meetingData.onlineMeeting ? 'teamsForBusiness' : undefined
             };
 
-            console.log('Created meeting:', meeting);
-            return meeting;
+            const response = await this.graphClient
+                .api('/me/events')
+                .post(event);
+
+            const duration = Date.now() - startTime;
+            log.graphAPI('/me/events', 'POST', true, duration);
+            log.info('Created meeting via Graph API', { meetingId: response.id });
+            
+            return {
+                id: response.id,
+                subject: response.subject,
+                start: response.start,
+                end: response.end,
+                attendees: response.attendees || [],
+                location: response.location,
+                onlineMeeting: response.onlineMeeting ? { joinUrl: response.onlineMeeting.joinUrl } : undefined
+            };
         } catch (error) {
-            console.error('Error creating meeting:', error);
-            throw error;
+            const duration = Date.now() - startTime;
+            log.graphAPI('/me/events', 'POST', false, duration);
+            log.error('Error creating meeting', error);
+            throw new Error(`Failed to create meeting: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
@@ -240,110 +266,253 @@ export class GraphService {
     }
 
     /**
-     * Check availability for specific time slots
+     * Check availability for specific time slots using Microsoft Graph API
      */
     async checkTimeSlotAvailability(timeSlotData: any): Promise<Availability[]> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock availability check - replace with actual Graph API call
-            return [
-                {
-                    email: timeSlotData.attendee || 'user@company.com',
-                    freeBusyStatus: 'free',
-                    start: timeSlotData.startTime,
-                    end: timeSlotData.endTime
-                }
-            ];
+            const attendeeEmail = timeSlotData.attendee || 'me';
+            
+            const request = {
+                schedules: [{ scheduleId: attendeeEmail, scheduleType: 'user' }],
+                startTime: { dateTime: timeSlotData.startTime, timeZone: 'UTC' },
+                endTime: { dateTime: timeSlotData.endTime, timeZone: 'UTC' },
+                availabilityViewInterval: 30
+            };
+
+            const response = await this.graphClient
+                .api('/me/calendar/getSchedule')
+                .post(request);
+
+            const schedule = response.value[0];
+            return [{
+                email: attendeeEmail,
+                freeBusyStatus: this.parseFreebusy(schedule.availabilityView || ''),
+                start: timeSlotData.startTime,
+                end: timeSlotData.endTime
+            }];
         } catch (error) {
             console.error('Error checking time slot availability:', error);
-            throw error;
+            throw new Error(`Failed to check time slot availability: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     /**
-     * Get user's calendar events for conflict detection
+     * Get user's calendar events for conflict detection using Microsoft Graph API
      */
     async getCalendarEvents(startTime: string, endTime: string, userId?: string): Promise<Meeting[]> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock calendar events - replace with actual Graph API call
-            return [];
+            const endpoint = userId ? `/users/${userId}/calendar/calendarView` : '/me/calendar/calendarView';
+            
+            const response = await this.graphClient
+                .api(endpoint)
+                .query({
+                    startDateTime: startTime,
+                    endDateTime: endTime
+                })
+                .select('id,subject,start,end,attendees,location,onlineMeeting')
+                .get();
+
+            return response.value.map((event: any) => ({
+                id: event.id,
+                subject: event.subject,
+                start: event.start,
+                end: event.end,
+                attendees: event.attendees || [],
+                location: event.location,
+                onlineMeeting: event.onlineMeeting ? { joinUrl: event.onlineMeeting.joinUrl } : undefined
+            }));
         } catch (error) {
             console.error('Error getting calendar events:', error);
-            throw error;
+            throw new Error(`Failed to get calendar events: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     /**
-     * Check availability of attendees
+     * Check availability of attendees using Microsoft Graph API
      */
     async checkAvailability(attendeeEmails: string[], startTime: string, endTime: string): Promise<Availability[]> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock availability check - replace with actual Graph API call
-            return attendeeEmails.map(email => ({
-                email,
-                freeBusyStatus: 'free' as const,
+            const schedules = attendeeEmails.map(email => ({ scheduleId: email, scheduleType: 'user' }));
+            
+            const request = {
+                schedules: schedules,
+                startTime: { dateTime: startTime, timeZone: 'UTC' },
+                endTime: { dateTime: endTime, timeZone: 'UTC' },
+                availabilityViewInterval: 60
+            };
+
+            const response = await this.graphClient
+                .api('/me/calendar/getSchedule')
+                .post(request);
+
+            return response.value.map((schedule: any) => ({
+                email: schedule.scheduleId,
+                freeBusyStatus: schedule.availabilityView ? this.parseFreebusy(schedule.availabilityView) : 'free',
                 start: startTime,
                 end: endTime
             }));
         } catch (error) {
             console.error('Error checking availability:', error);
-            throw error;
+            throw new Error(`Failed to check availability: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     /**
-     * Find available rooms
+     * Parse freebusy availability view
+     * 0 = free, 1 = tentative, 2 = busy, 3 = out of office, 4 = working elsewhere
+     */
+    private parseFreebusy(availabilityView: string): 'free' | 'busy' | 'tentative' | 'outOfOffice' {
+        if (availabilityView.includes('3')) {
+            return 'outOfOffice';
+        } else if (availabilityView.includes('2') || availabilityView.includes('4')) {
+            return 'busy';
+        } else if (availabilityView.includes('1')) {
+            return 'tentative';
+        }
+        return 'free';
+    }
+
+    /**
+     * Find available rooms using Microsoft Graph API
      */
     async findAvailableRooms(startTime: string, endTime: string, capacity?: number, equipment?: string[]): Promise<Room[]> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock room finding - replace with actual Graph API call
-            return [
-                {
-                    id: 'room1',
-                    displayName: 'Conference Room A',
-                    emailAddress: 'room-a@company.com',
-                    capacity: 10,
-                    equipment: ['projector', 'whiteboard'],
-                    isAvailable: true
-                }
-            ];
+            // First, get all rooms/places
+            const placesResponse = await this.graphClient
+                .api('/places/microsoft.graph.room')
+                .get();
+
+            const rooms: Room[] = placesResponse.value.map((place: any) => ({
+                id: place.id,
+                displayName: place.displayName,
+                emailAddress: place.emailAddress,
+                capacity: place.capacity,
+                equipment: place.equipment || [],
+                isAvailable: true // Will be updated by schedule check
+            }));
+
+            // Filter by capacity if specified
+            let filteredRooms = rooms;
+            if (capacity) {
+                filteredRooms = rooms.filter(room => room.capacity && room.capacity >= capacity);
+            }
+
+            // Filter by equipment if specified
+            if (equipment && equipment.length > 0) {
+                filteredRooms = filteredRooms.filter(room => 
+                    equipment.every(eq => room.equipment?.includes(eq))
+                );
+            }
+
+            // Check availability using getSchedule
+            if (filteredRooms.length > 0) {
+                const scheduleRequest = {
+                    schedules: filteredRooms.map(room => ({ scheduleId: room.emailAddress, scheduleType: 'room' })),
+                    startTime: { dateTime: startTime, timeZone: 'UTC' },
+                    endTime: { dateTime: endTime, timeZone: 'UTC' },
+                    availabilityViewInterval: 60
+                };
+
+                const scheduleResponse = await this.graphClient
+                    .api('/me/calendar/getSchedule')
+                    .post(scheduleRequest);
+
+                // Update availability based on schedule
+                scheduleResponse.value.forEach((schedule: any) => {
+                    const room = filteredRooms.find(r => r.emailAddress === schedule.scheduleId);
+                    if (room) {
+                        // If availabilityView contains any non-zero, room is not available
+                        room.isAvailable = !schedule.availabilityView || schedule.availabilityView === '0'.repeat(schedule.availabilityView.length);
+                    }
+                });
+            }
+
+            return filteredRooms.filter(room => room.isAvailable);
         } catch (error) {
             console.error('Error finding rooms:', error);
-            throw error;
+            // If places API is not available, return empty array instead of throwing
+            console.warn('Note: Room finding requires appropriate Microsoft Graph permissions and organizational configuration');
+            return [];
         }
     }
 
     /**
-     * Update an existing meeting
+     * Update an existing meeting using Microsoft Graph API
      */
     async updateMeeting(meetingId: string, updates: Partial<Meeting>): Promise<Meeting> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock meeting update - replace with actual Graph API call
             console.log(`Updating meeting ${meetingId} with:`, updates);
             
-            // Return updated meeting
+            const response = await this.graphClient
+                .api(`/me/events/${meetingId}`)
+                .patch(updates);
+
             return {
-                id: meetingId,
-                subject: updates.subject || 'Updated Meeting',
-                start: updates.start || { dateTime: new Date().toISOString(), timeZone: 'UTC' },
-                end: updates.end || { dateTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(), timeZone: 'UTC' },
-                attendees: updates.attendees || []
+                id: response.id,
+                subject: response.subject,
+                start: response.start,
+                end: response.end,
+                attendees: response.attendees || [],
+                location: response.location,
+                onlineMeeting: response.onlineMeeting ? { joinUrl: response.onlineMeeting.joinUrl } : undefined
             };
         } catch (error) {
             console.error('Error updating meeting:', error);
-            throw error;
+            throw new Error(`Failed to update meeting: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 
     /**
-     * Cancel a meeting
+     * Cancel a meeting using Microsoft Graph API
      */
     async cancelMeeting(meetingId: string): Promise<void> {
+        await this.ensureInitialized();
+        
+        if (!this.graphClient) {
+            throw new Error('Graph client not initialized');
+        }
+        
         try {
-            // Mock meeting cancellation - replace with actual Graph API call
             console.log(`Cancelling meeting ${meetingId}`);
+            
+            await this.graphClient
+                .api(`/me/events/${meetingId}`)
+                .delete();
+                
+            console.log(`Meeting ${meetingId} cancelled successfully`);
         } catch (error) {
             console.error('Error cancelling meeting:', error);
-            throw error;
+            throw new Error(`Failed to cancel meeting: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 }
