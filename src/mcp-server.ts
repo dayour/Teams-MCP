@@ -11,6 +11,7 @@ import { GraphService, Meeting, Room } from './services/graphService.js';
 import { ConflictResolutionService, TimeSlot } from './services/conflictResolutionService.js';
 import { log } from './utils/logger.js';
 import { z } from 'zod';
+import { facilitatorAgent, AgentIdentity, AuditLogEntry } from './facilitator-agent.js';
 
 // Define schemas for tool arguments
 const ScheduleMeetingSchema = z.object({
@@ -87,8 +88,8 @@ class TeamsMCPServer {
     this.server = new Server(
       {
         name: 'teams-mcp-server',
-        version: '1.0.0',
-        description: 'Microsoft Teams integration for AI assistants'
+        version: '1.1.0',
+        description: 'Microsoft Teams integration for AI assistants with facilitator agent support'
       },
       {
         capabilities: {
@@ -102,6 +103,9 @@ class TeamsMCPServer {
 
     this.setupToolHandlers();
     this.setupErrorHandling();
+    
+    // Log facilitator agent initialization
+    log.info('Microsoft Facilitator Agent integration enabled', facilitatorAgent.getMetadata());
   }
 
   /**
@@ -264,6 +268,14 @@ class TeamsMCPServer {
       
       log.info(`Executing tool: ${name}`, { tool: name, args });
 
+      // Create agent identity for audit logging
+      const agentIdentity: AgentIdentity = {
+        agentId: process.env.AGENT_ID || 'teams-mcp-server',
+        tenantId: process.env.TENANT_ID,
+        userId: process.env.USER_ID,
+        timestamp: new Date().toISOString()
+      };
+
       try {
         let result;
         switch (name) {
@@ -295,10 +307,39 @@ class TeamsMCPServer {
         const duration = Date.now() - startTime;
         log.toolExecution(name, args, duration);
         this.logSuccess(`Tool execution: ${name}`);
+        
+        // Log to facilitator agent for audit trail
+        facilitatorAgent.logExecution({
+          timestamp: new Date().toISOString(),
+          agentId: agentIdentity.agentId,
+          userId: agentIdentity.userId,
+          tenantId: agentIdentity.tenantId,
+          operation: 'tool_execution',
+          toolName: name,
+          parameters: args || {},
+          result: 'success',
+          duration
+        });
+        
         return result;
         
       } catch (error) {
+        const duration = Date.now() - startTime;
         this.logError(`Tool execution: ${name}`, error, { args });
+        
+        // Log failure to facilitator agent for audit trail
+        facilitatorAgent.logExecution({
+          timestamp: new Date().toISOString(),
+          agentId: agentIdentity.agentId,
+          userId: agentIdentity.userId,
+          tenantId: agentIdentity.tenantId,
+          operation: 'tool_execution',
+          toolName: name,
+          parameters: args || {},
+          result: 'failure',
+          error: error instanceof Error ? error.message : String(error),
+          duration
+        });
         
         // Return user-friendly error message
         const errorMessage = this.formatUserError(name, error);
@@ -649,11 +690,17 @@ class TeamsMCPServer {
   async run() {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
+    
     log.info('Teams MCP Server started successfully', { 
-      version: '1.0.0',
-      transport: 'stdio'
+      version: '1.1.0',
+      transport: 'stdio',
+      facilitatorAgent: true,
+      metadata: facilitatorAgent.getMetadata()
     });
+    
     console.error('Teams MCP Server running on stdio');
+    console.error('Microsoft Facilitator Agent Integration: ENABLED');
+    console.error('Agent Discovery Info available via FACILITATOR_AGENT_METADATA environment variable');
   }
 }
 

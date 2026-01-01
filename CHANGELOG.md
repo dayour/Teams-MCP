@@ -5,6 +5,46 @@ All notable changes to Teams MCP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-01
+
+### Added
+- **Microsoft Facilitator Agent Support**: Enhanced MCP server to support agent-to-agent communication for Microsoft's agentic computing platform
+- **Enhanced Security**: Upgraded critical dependencies to address security vulnerabilities
+
+### Changed
+- **Package Upgrades**: Updated all dependencies to latest stable versions
+  - @azure/msal-node: 2.16.2 → 3.8.4 (major upgrade with enhanced security)
+  - @modelcontextprotocol/sdk: 1.16.0 → 1.25.1 (security fix for DNS rebinding)
+  - axios: 1.10.0 → 1.13.2 (DoS vulnerability fix)
+  - botbuilder packages: 4.23.2 → 4.23.3
+  - node-cron: 3.0.3 → 4.2.1
+  - typescript: 5.8.3 → 5.9.3
+  - @types/node: 20.19.7 → 20.19.27
+  - nodemon: 3.1.10 → 3.1.11
+  - adaptivecards: 3.0.4 → 3.0.5
+- **VSCode Extension Package Upgrades**:
+  - @azure/msal-node: 2.16.2 → 3.8.4
+  - @modelcontextprotocol/sdk: 1.16.0 → 1.25.1
+  - @types/vscode: 1.102.0 → 1.107.0
+  - @vscode/test-cli: 0.0.4 → 0.0.12
+  - @vscode/vsce: 2.32.0 → 3.7.1
+  - typescript: 5.8.3 → 5.9.3
+  - @types/node: 20.19.8 → 20.19.27
+
+### Security
+- Fixed 9 critical and high-severity vulnerabilities in main project
+- Fixed 8 vulnerabilities in vscode-extension
+- Upgraded @modelcontextprotocol/sdk to address DNS rebinding vulnerability (GHSA-w48q-cv73-mx4w)
+- Upgraded axios to fix DoS vulnerability (GHSA-4hjh-wcwx-xvwj)
+- Upgraded form-data, jws, qs, body-parser to address security issues
+- All builds pass with zero compilation errors
+
+### Notes
+- Zod remains at 3.25.76 (v4 requires significant code changes, deferred to future release)
+- Legacy Teams bot code (index.ts) deprecated in favor of MCP server (mcp-server.ts)
+- Restify vulnerabilities noted but kept for backward compatibility (find-my-way, send)
+- Validated full build process for both main project and VSCode extension
+
 ## [1.0.0] - 2024-12-13
 
 ### Added
