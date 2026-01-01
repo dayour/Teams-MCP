@@ -282,8 +282,11 @@ facilitatorAgent.logExecution({
 // Get statistics
 const stats = facilitatorAgent.getStatistics();
 
-// Export discovery info
-const discoveryJson = facilitatorAgent.exportDiscoveryInfo();
+// Get discovery info (as object)
+const discoveryInfo = facilitatorAgent.getDiscoveryInfo();
+
+// Export as JSON string
+const discoveryJson = JSON.stringify(discoveryInfo, null, 2);
 ```
 
 ## Resources

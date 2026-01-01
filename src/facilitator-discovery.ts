@@ -48,8 +48,8 @@ For more information, see:
 }
 
 function exportDiscoveryInfo() {
-  const discoveryInfo = facilitatorAgent.exportDiscoveryInfo();
-  console.log(discoveryInfo);
+  const discoveryInfo = facilitatorAgent.getDiscoveryInfo();
+  console.log(JSON.stringify(discoveryInfo, null, 2));
 }
 
 function showMetadata() {

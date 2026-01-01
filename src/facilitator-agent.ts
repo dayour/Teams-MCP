@@ -274,11 +274,11 @@ export class FacilitatorAgentIntegration {
   }
 
   /**
-   * Export agent discovery information for ODR registration
+   * Get discovery information object for ODR registration
    * This can be used with Windows 11 ODR (odr.exe) for agent registration
    */
-  exportDiscoveryInfo(): string {
-    const discoveryInfo = {
+  getDiscoveryInfo(): Record<string, any> {
+    return {
       apiVersion: 'mcp/v1',
       kind: 'MCPServer',
       metadata: {
@@ -332,8 +332,6 @@ export class FacilitatorAgentIntegration {
         ]
       }
     };
-
-    return JSON.stringify(discoveryInfo, null, 2);
   }
 
   /**
