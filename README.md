@@ -65,6 +65,8 @@ npm run mcp-server
 - **Calendar Integration**: Check availability and get calendar overviews  
 - **Room Booking**: Find and reserve meeting rooms with equipment requirements
 - **Conflict Resolution**: Smart alternative time suggestions
+- **Microsoft Facilitator Agent Support**: Built-in support for Windows 11 ODR and agent-to-agent communication
+- **Security & Governance**: Comprehensive audit logging and authorization for enterprise compliance
 - **Easy Authentication**: Device-based auth with no Azure setup required
 - **Auto-Configuration**: Automatic Claude Desktop integration
 - **GitHub Copilot Integration**: Use @teams directly in VS Code Copilot chat
@@ -202,6 +204,7 @@ docker-compose down
 
 - **[Installation Guide](TEAMS-MCP-README.md)** - Detailed setup instructions
 - **[API Reference](API.md)** - Complete API documentation for all MCP tools
+- **[Facilitator Agent Guide](FACILITATOR-AGENT.md)** - Microsoft agent integration and ODR
 - **[Docker Guide](DOCKER.md)** - Production deployment with Docker
 - **[GitHub Copilot Guide](GITHUB-COPILOT-INTEGRATION.md)** - Copilot integration
 - **[Changelog](CHANGELOG.md)** - Version history and release notes

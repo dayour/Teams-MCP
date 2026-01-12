@@ -137,21 +137,21 @@
     "package": "vsce package"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
-    "@types/node": "^20.11.5",
-    "@typescript-eslint/eslint-plugin": "^6.19.1",
-    "@typescript-eslint/parser": "^6.19.1",
-    "eslint": "^8.56.0",
-    "typescript": "^5.3.3",
-    "@vscode/test-cli": "^0.0.4",
+    "@types/vscode": "^1.107.0",
+    "@types/node": "^20.19.27",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.3.9",
-    "@vscode/vsce": "^2.22.0"
+    "@vscode/vsce": "^3.7.1"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.16.0",
-    "@azure/msal-node": "^2.6.6",
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@azure/msal-node": "^3.8.4",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "zod": "^3.23.8"
+    "zod": "^3.25.76"
   },
   "repository": {
     "type": "git",
