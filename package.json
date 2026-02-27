@@ -43,7 +43,7 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "adaptivecards": "^3.0.5",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "botbuilder": "^4.23.3",
     "botbuilder-azure-blobs": "^4.23.3",
     "botframework-connector": "^4.23.3",
