@@ -53,7 +53,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^20.19.27",
+    "@types/node": "^25.3.2",
     "@types/restify": "^8.5.12",
     "nodemon": "^3.1.11",
     "typescript": "^5.9.3"
