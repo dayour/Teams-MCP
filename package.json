@@ -39,21 +39,21 @@
   "author": "Teams Developer",
   "license": "MIT",
   "dependencies": {
-    "@azure/msal-node": "^3.8.4",
+    "@azure/msal-node": "^5.1.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "adaptivecards": "^3.0.5",
-    "axios": "^1.13.2",
+    "axios": "^1.13.6",
     "botbuilder": "^4.23.3",
     "botbuilder-azure-blobs": "^4.23.3",
     "botframework-connector": "^4.23.3",
     "moment": "^2.30.1",
     "node-cron": "^4.2.1",
     "restify": "^11.1.0",
-    "zod": "^3.25.76"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^20.19.27",
+    "@types/node": "^25.5.0",
     "@types/restify": "^8.5.12",
     "nodemon": "^3.1.11",
     "typescript": "^5.9.3"
