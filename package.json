@@ -41,7 +41,7 @@
   "dependencies": {
     "@azure/msal-node": "^5.1.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "@modelcontextprotocol/sdk": "^1.27.1",
+    "@modelcontextprotocol/sdk": "^1.28.0",
     "adaptivecards": "^3.0.5",
     "axios": "^1.13.6",
     "botbuilder": "^4.23.3",
