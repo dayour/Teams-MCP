@@ -149,7 +149,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.1",
-    "@azure/msal-node": "^3.8.4",
+    "@azure/msal-node": "^5.2.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "zod": "^3.25.76"
   },
